@@ -1,0 +1,56 @@
+ASA2()
+    graph = makeGraph()
+    list_min_cut = edmundsKarp(graph, 0, 1)
+    checkEdgeType(graph, list_min_cut)
+
+
+makeGraph()
+    Create adj list called Adj
+    // Adj[0] -> source
+    // Adj[1] -> target
+
+    f = number of providers
+    addProviders(graph, f)
+
+    e = number of distributors
+    addDistributors(graph, e)
+
+    t = number of connections
+    
+    makeStationBridges(graph, f, e)
+    recieveProducerCap(graph)
+
+addProviders(graph, f)
+    u = 2
+    while u < f + 2
+        Adj[u] = NULL
+
+addDistributors(graph, e)
+//STOPED HEERERERE
+
+
+makeStationBridges(graph, f, e)
+    for each u in graph starting from 2 + f
+        v = u + e
+        Adj[u] = v
+        capacity(u, v) = -1
+
+recieveProducerCap(graph)
+    for each vertex in 
+        capacity(s, )
+
+checkEdgeType(graph, list_min_cut)
+    listStation = []
+    listConnection = []
+
+    for each u in list_min_cut
+        for each v in Adj[v]
+            if v not in list_min_cut
+                if (u,v) stationEdge
+                    then listStation.append(u)
+                
+                else if (u,v) connectionEdge
+                    then listConnection.append(u)
+
+    printVertices(listStation)
+    printVertices(listConnection)
