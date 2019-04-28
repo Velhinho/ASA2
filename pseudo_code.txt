@@ -4,6 +4,7 @@ ASA2()
     checkEdgeType(graph, list_min_cut)
 
 
+# -----------------------------------
 makeGraph()
     Create adj list called Adj
     // Adj[0] -> source
@@ -19,15 +20,19 @@ makeGraph()
     
     makeStationBridges(graph, f, e)
     recieveProducerCap(graph)
+    return graph
 
 addProviders(graph, f)
     u = 2
     while u < f + 2
         Adj[u] = NULL
+        u += 1
 
 addDistributors(graph, e)
-//STOPED HEERERERE
-
+    u = f + 2
+    while u < f + 2 + e
+        Adj[u] = NULL
+        u += 1
 
 makeStationBridges(graph, f, e)
     for each u in graph starting from 2 + f
@@ -39,6 +44,13 @@ recieveProducerCap(graph)
     for each vertex in 
         capacity(s, )
 
+
+# -----------------------------------
+edmundsKarp(graph, source, target)
+    pass
+
+
+# ------------------------------------
 checkEdgeType(graph, list_min_cut)
     listStation = []
     listConnection = []
