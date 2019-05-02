@@ -1,0 +1,49 @@
+def ASA():
+    graph = makeGraph()
+    list_min_cut = relabel_to_front(graph, source, target)
+
+
+def relabel_to_front(graph, source, target):
+    initialize_preflow(graph, source)
+    queue = []
+    add_all_vertices(graph, queue)
+    
+    # First in First out
+    u = queue.pop()
+    while u != NULL:
+        old_height_u = u.height
+        discharge(u)
+
+        if u.h > old_height_u:
+            # Adds to the end of the queue
+            queue.push()
+    
+        # Next vertex in the queue
+        u = queue.pop()
+
+
+def initialize_preflow(graph, source):
+    u = source.current
+
+    # Set all edges from source to max flow
+    while u != NULL:
+        u.currentflow = u.capacity
+
+    source.height = graph.number_vertices
+
+
+def discharge(u):
+    while u.excess > 0:
+        
+        # u.current a pointer to one of the vertices in u neighbor list
+        # u.current starts in the first vertex in the neighbor list
+        v = u.current
+
+        if v == NULL:
+            relabel(u)
+            u.current = u.neighborlist.next
+        
+        elif v.currentflow < v.capacity && u.height > v.height:
+            push(u, v)
+        
+        else u.current = u.next_neighbor
