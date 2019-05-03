@@ -3,10 +3,30 @@ def ASA():
     list_min_cut = relabel_to_front(graph, source, target)
 
 
+# Make graph from input --------------------------
+makeGraph():
+    graph = []
+    add_source(graph)
+    add_target(graph)
+    
+    f = number of providers
+    addProviders(graph, f)
+
+    e = number of distributors
+    addDistributors(graph, e)
+
+    t = number of connections
+    
+    makeStationBridges(graph, f, e)
+    recieveProducerCap(graph)
+    return graph
+
+
+# Relable to Front -------------------------------
 def relabel_to_front(graph, source, target):
     initialize_preflow(graph, source)
     queue = []
-    add_all_vertices(graph, queue)
+    add_all_vertices_queue(graph, queue)
     
     # First in First out
     u = queue.pop()
