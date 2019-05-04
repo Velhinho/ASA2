@@ -18,7 +18,20 @@ vertex_t* initVertex()
     vertex_t* vertex = (vertex_t*) malloc(sizeof(vertex_t));
     vertex->excess = -1;
     vertex->height = -1;
+
+    list_t* edges = initList();
+    vertex->edges = edges;
     return vertex;
+}
+
+void addVertexEdge(vertex_t* vertex, edge_t* edge)
+{
+    addList(vertex->edges, (void*) edge);
+}
+
+edge_t* getVertexEdge(vertex_t *vertex, int index)
+{
+    return (edge_t*) getList(vertex->edges, index);
 }
 
 void changeVertexExcess(vertex_t* vertex, int excess)
@@ -68,6 +81,10 @@ int removeVertex(vertex_t* vertex)
         vertexError();
         return 0;
     }
+    
+    int size = vertex->edges->size;
+    for(int i = 0; i < size; i++)
+        removeList(vertex->edges, i);
 
     free(vertex);
     return 1;
@@ -132,4 +149,25 @@ int removeEdge(edge_t* edge)
 
     free(edge);
     return 1;
+}
+
+graph_t *initGraph()
+{
+    list_t* list = initList();
+    return (graph_t *)list;
+}
+
+void addGraphVertex(graph_t *graph, vertex_t *vertex)
+{
+    addList((list_t *)graph, (void *)vertex);
+}
+
+vertex_t* getGraphVertex(graph_t *graph, int index)
+{
+    return (vertex_t *)getList((list_t *)graph, index);
+}
+
+int removeGraphVertex(graph_t *graph, int index)
+{
+    removeList((list_t *)graph, index);
 }
