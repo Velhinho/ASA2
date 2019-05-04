@@ -169,5 +169,7 @@ vertex_t* getGraphVertex(graph_t *graph, int index)
 
 int removeGraphVertex(graph_t *graph, int index)
 {
-    removeList((list_t *)graph, index);
+    // Return 1 if successful
+    // Return 0 otherwise
+    return removeList((list_t *)graph, index);
 }
