@@ -16,8 +16,8 @@ void edgeError()
 vertex_t* initVertex()
 {
     vertex_t* vertex = (vertex_t*) malloc(sizeof(vertex_t));
-    vertex->excess = -1;
-    vertex->height = -1;
+    vertex->excess = 0;
+    vertex->height = 0;
 
     list_t* edges = initList();
     vertex->edges = edges;
@@ -94,7 +94,7 @@ int removeVertex(vertex_t* vertex)
 edge_t* initEdge()
 {
     edge_t* edge = (edge_t*) malloc(sizeof(edge_t));
-    edge->currentflow = -1;
+    edge->currentflow = 0;
     edge->capacity = -1;
     return edge;
 }

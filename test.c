@@ -8,11 +8,15 @@
 #define MAXBUFFER 1000
 
 
-void add_providers(graph_t* graph, int number_providers)
+int main()
 {
-    vertex_t* source = getGraphVertex(graph, 0);
+    //Test code
+    graph_t* graph = initGraph();
+    vertex_t* source = initVertex();
+    addGraphVertex(graph, source);
+    
     char input_line[MAXBUFFER];
-    char* token;
+    char *token;
     int capacity;
     vertex_t* vertex;
     edge_t* edge_out;
@@ -28,7 +32,7 @@ void add_providers(graph_t* graph, int number_providers)
     Each vertex and edge represent the max production
     of a provider
     */
-    while(token != NULL)
+    while (token != NULL)
     {
         capacity = atoi(token);
         vertex = initVertex();
@@ -41,47 +45,10 @@ void add_providers(graph_t* graph, int number_providers)
         changeEdgeCapacity(edge_in, capacity);
         changeEdgeCurrentFlow(edge_in, capacity);
         addVertexEdge(vertex, edge_in);
-
+        
         // Next value
         token = strtok(NULL, " ");
     }
-}
 
-graph_t* makeGraph()
-{
-    graph_t* graph = initGraph();
-    vertex_t* source = initVertex();
-    vertex_t* target = initVertex();
-
-    addGraphVertex(graph, source);
-    addGraphVertex(graph, target);
-
-    int number_providers;
-    int number_distributors;
-    int number_connections;
-    printf("Enter first line\n");
-    scanf("%d %d %d", 
-            &number_providers, 
-            &number_distributors, 
-            &number_connections);
-
-    add_providers(graph, number_providers);
-    
-
-    return NULL;
-}
-
-int main()
-{
-    graph_t* graph = makeGraph();
     return 0;
 }
-
-/* 
-Duas ultimas do teste 1
-e a primeira do teste 2
-*/
-
-// Cardinalidade
-// Rice
-// Reducao ?
