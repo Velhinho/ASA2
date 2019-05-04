@@ -3,9 +3,32 @@
 #include "vertex.h"
 
 #include <stdio.h>
+#include <string.h>
+
+#define MAXBUFFER 1000
 
 
-list_t* makeGraph()
+void add_providers()
+{
+    char input_line[MAXBUFFER];
+    fgets(input_line, MAXBUFFER, stdin);
+
+    char* token;
+    token = strtok(input_line, " ");
+
+    while(token != NULL)
+    {
+        printf("%s\n", token);
+        token = strtok(NULL, " ");
+    }
+
+    /*
+    Tentar descobrir como ler a primeira
+    linha de input
+    */
+}
+
+graph_t* makeGraph()
 {
     graph_t* graph = initGraph();
     vertex_t* source = initVertex();
@@ -14,14 +37,22 @@ list_t* makeGraph()
     addGraphVertex(graph, source);
     addGraphVertex(graph, target);
 
-    
+    int number_providers;
+    int number_distributors;
+    int number_connections;
+    scanf("%d %d %d", 
+            &number_providers, 
+            &number_distributors, 
+            &number_connections);
+
+    add_providers();
 
     return NULL;
 }
 
 int main()
 {
-    list_t* graph = makeGraph();
+    graph_t* graph = makeGraph();
     return 0;
 }
 
