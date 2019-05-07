@@ -8,12 +8,12 @@ queue_t* initQueue()
     return queue;
 }
 
-void pushQueue(queue_t* queue, int data)
+void pushQueue(queue_t* queue, void* data)
 {
     addList((list_t*)queue, data);
 }
 
-int popQueue(queue_t* queue)
+void* popQueue(queue_t* queue)
 {
     list_t* list = (list_t*) queue;
 

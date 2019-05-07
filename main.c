@@ -1,87 +1,67 @@
-#include "lib/list.h"
-#include "vertex.h"
+#include "lib/queue.h"
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
 
-#define MAXBUFFER 1000
+#define MAXBUFFER 10000
 
 
-void add_providers(graph_t* graph, int number_providers)
+int number_vertices;
+int *current_vertex, *height, *excess;
+int **capacity, **flow;
+queue_t *vertices_queue;
+
+
+int *init_lists(int size)
 {
-    vertex_t* source = getGraphVertex(graph, 0);
-    char input_line[MAXBUFFER];
-    char* token;
-    int capacity;
-    vertex_t* vertex;
-    edge_t* edge_out;
-    edge_t* edge_in;
-
-    printf("Enter second line\n");
-    fgets(input_line, MAXBUFFER, stdin);
-    token = strtok(input_line, " ");
-
-    /* 
-    Creates a vertex to be connected to the source
-    and creates an edge from the source to the vertex
-    Each vertex and edge represent the max production
-    of a provider
-    */
-    while(token != NULL)
-    {
-        capacity = atoi(token);
-        vertex = initVertex();
-        edge_out = initEdge();
-        edge_in = initEdge();
-        changeEdgeCapacity(edge_out, capacity);
-        addVertexEdge(source, edge_out);
-
-        // Representing residual graph
-        changeEdgeCapacity(edge_in, capacity);
-        changeEdgeCurrentFlow(edge_in, capacity);
-        addVertexEdge(vertex, edge_in);
-
-        // Next value
-        token = strtok(NULL, " ");
-    }
+    int *ret = (int *)malloc(size * sizeof(int));
+    return ret;
 }
 
-graph_t* makeGraph()
+int **init_matrix(int size)
 {
-    graph_t* graph = initGraph();
-    vertex_t* source = initVertex();
-    vertex_t* target = initVertex();
+    int **ret = (int **)malloc(size * sizeof(int*));
 
-    addGraphVertex(graph, source);
-    addGraphVertex(graph, target);
+    for(int i = 0; i < size; i++)
+    {
+        ret[i] = init_lists(size);
+    }
+    return ret;
+}
 
+void fill_pointers()
+{
+    current_vertex = init_lists(number_vertices);
+    height = init_lists(number_vertices);
+    excess = init_lists(number_vertices);
+    capacity = init_matrix(number_vertices);
+    flow = init_matrix(number_vertices);
+    vertices_queue = initQueue();
+}
+
+void make_graph()
+{
     int number_providers;
     int number_distributors;
     int number_connections;
     printf("Enter first line\n");
-    scanf("%d %d %d", 
-            &number_providers, 
-            &number_distributors, 
+    scanf("%d %d %d",
+            &number_providers,
+            &number_distributors,
             &number_connections);
 
-    add_providers(graph, number_providers);
-    
+    number_vertices = number_providers + 2 * number_distributors;
+    fill_pointers();
+}
 
-    return NULL;
+void relabel_front()
+{
+
 }
 
 int main()
 {
-    graph_t* graph = makeGraph();
-    return 0;
+    make_graph();
+    relabel_front();
 }
-
-/* 
-Duas ultimas do teste 1
-e a primeira do teste 2
-*/
-
-// Cardinalidade
-// Rice
-// Reducao ?
