@@ -1,4 +1,5 @@
 #include "lib/queue.h"
+#include "lib/list.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -8,36 +9,63 @@
 
 
 int number_vertices;
-int *current_vertex, *height, *excess;
-int **capacity, **flow;
+list_t *current_vertex, *height, *excess;
+list_t **adj_list, **capacity, **flow;
 queue_t *vertices_queue;
 
-
-int *init_lists(int size)
+void init_matrix(list_t **list)
 {
-    int *ret = (int *)malloc(size * sizeof(int));
-    return ret;
-}
+    list = (list_t **)malloc(number_vertices * sizeof(list_t*));
 
-int **init_matrix(int size)
-{
-    int **ret = (int **)malloc(size * sizeof(int*));
-
-    for(int i = 0; i < size; i++)
+    for(int i = 0; i < number_vertices; i++)
     {
-        ret[i] = init_lists(size);
+        list[i] = initList();
     }
-    return ret;
 }
+
+int getEdge(list_t **list, int u, int v)
+{
+    return getList(list[u], v);(
+}
+
+void addEdge(list_t **list, int u, int v)
+{
+    addList(list[u], v);
+    addList(list[v], u);
+}
+
+/*
+2 5 60
+
+capacity[2][5] = 60
+
+
+
+*/
+
+/* 
+3 fornecedores
+4 estacoes
+
+v[2] a [5] fornecedores
+
+v_in(v[6]): 6 + 4 + 1
+
+v[6] ao v[10]
+v[11] ao v[17]
+*/
 
 void fill_pointers()
 {
-    current_vertex = init_lists(number_vertices);
-    height = init_lists(number_vertices);
-    excess = init_lists(number_vertices);
-    capacity = init_matrix(number_vertices);
-    flow = init_matrix(number_vertices);
+    current_vertex = initList();
+    height = initList();
+    excess = initList();
+    init_matrix(adj_list);
+    init_matrix(capacity);
+    init_matrix(flow);
     vertices_queue = initQueue();
+
+
 }
 
 void make_graph()
