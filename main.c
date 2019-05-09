@@ -107,6 +107,7 @@ void add_connections()
 
         else { add_capacity(u, v, capacity_number); }
     }
+    print_graph();
 }
 
 void add_distributors()
