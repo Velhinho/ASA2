@@ -18,14 +18,16 @@ list_t **adj_list, **capacity, **flow;
 queue_t *vertices_queue;
 
 
-void init_matrix(list_t **list)
+list_t **init_matrix()
 {
-    list = (list_t **)malloc(number_vertices * sizeof(list_t*));
+    list_t **list = (list_t **)malloc(number_vertices * sizeof(list_t*));
 
     for(int i = 0; i < number_vertices; i++)
     {
         list[i] = initList();
     }
+
+    return list;
 }
 
 void add_capacity(int u, int v, int capacity_number)
@@ -58,6 +60,54 @@ void change_flow(int u, int v, int flow_number)
     changeList(flow[u], index, flow_number);
 }
 
+void make_distributors()
+{
+    for (int i = ; i < number_distributors; i++)
+    {
+        /* code */
+    }
+    
+}
+
+void add_distributors()
+{
+    char input_line[MAXBUFFER];
+    char *token;
+    int distributor_capacity;
+
+    /* 
+    Each distributor is a vertex pair (distributor_in, distributor_out)
+    The edge between these vertices represents the capacity of the distributor
+    
+    If there are 2 providers and 2 distributors then the list would look like:
+    [0]source, [1]target, [2]provider_1, [3]provider_2, 
+    [4]distributor_in_1, [5]distributor_in_2
+    [5]distributor_out_1, [6]distributor_out_2
+
+    So the indexes for distributor_in starts after the number of providers
+    plus the source and target (number_providers + 2)
+
+    And the indexes for distributor_out starts after all the distributor_in 
+    */
+    int distributor_in = number_providers + 2;
+    int distributor_out = distributor_in + number_distributors;
+
+    printf("Enter third line\n");
+    fgets(input_line, MAXBUFFER, stdin);
+    token = strtok(input_line, " ");
+
+    while (token != NULL)
+    {
+        distributor_capacity = atoi(token);
+        add_capacity(distributor_in, distributor_out, distributor_capacity);    
+
+        // Next value
+        token = strtok(NULL, " ");
+        distributor_in += 1;
+        distributor_out += 1;
+    }
+}
+
 void add_providers()
 {
     char input_line[MAXBUFFER];
@@ -79,8 +129,7 @@ void add_providers()
     {
         provider_capacity = atoi(token);
         add_capacity(SOURCE, provider, provider_capacity);
-        printf("%d\n", provider_capacity);
-
+        
         // Next value
         token = strtok(NULL, " ");
         provider += 1;
@@ -92,23 +141,28 @@ void fill_pointers()
     current_vertex = initList();
     height = initList();
     excess = initList();
-    init_matrix(adj_list);
-    init_matrix(capacity);
-    init_matrix(flow);
+    adj_list = init_matrix();
+    capacity = init_matrix();
+    flow = init_matrix();
     vertices_queue = initQueue();
 }
 
 void make_graph()
 {
+    char clean_input[MAXBUFFER];
     printf("Enter first line\n");
     scanf("%d %d %d",
             &number_providers,
             &number_distributors,
             &number_connections);
 
+    // scanf leaves a newline char, screws next fgets
+    fgets(clean_input, MAXBUFFER, stdin);
+
     number_vertices = number_providers + 2 * number_distributors;
     fill_pointers();
     add_providers();
+    add_distributors();
 }
 
 void relabel_front()
