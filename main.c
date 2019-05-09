@@ -60,6 +60,19 @@ void change_flow(int u, int v, int flow_number)
     changeList(flow[u], index, flow_number);
 }
 
+
+void add_connections()
+{
+    int u, v, capacity;
+    printf("Enter following lines\n");
+
+    for (int i = 0; i < number_connections; i++)
+    {
+        scanf("%d %d %d", &u, &v, &capacity);
+        add_capacity(u, v, capacity);
+    }
+}
+
 void add_distributors()
 {
     char input_line[MAXBUFFER];
@@ -155,6 +168,7 @@ void make_graph()
     fill_pointers();
     add_providers();
     add_distributors();
+    add_connections();
 }
 
 void relabel_front()
