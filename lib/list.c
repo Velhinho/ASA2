@@ -1,5 +1,6 @@
 #include "list.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 
 list_t *initList()
@@ -97,4 +98,15 @@ int removeList(list_t *list, int index)
 
     free(currentnode);
     return 1;
+}
+
+void printList(list_t *list)
+{
+    node_t *node = list->start;
+
+    for (int i = 0; i < list->size; i++)
+    {
+        printf("%d ", node->data);
+        node = node->next;
+    }
 }

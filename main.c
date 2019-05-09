@@ -60,16 +60,52 @@ void change_flow(int u, int v, int flow_number)
     changeList(flow[u], index, flow_number);
 }
 
+int is_distributor_in(int vertex)
+{
+    int distributor_in_start = 2 + number_providers;
+    int distributor_in_end = distributor_in_start + number_distributors;
+
+    return vertex >= distributor_in_start && vertex <= distributor_in_end;
+}
+
+int get_distributor_out(int vertex)
+{
+    if (!is_distributor_in(vertex))
+    {
+        printf("not a distributor");
+        return -1;
+    }
+
+    return vertex + number_distributors;
+}
+
+void print_graph()
+{
+    printf("\n");
+    for (int i = 0; i < number_vertices; i++)
+    {
+        printf("vertex: %d\n", i);
+        printList(adj_list[i]);
+        printf("\n");
+    }
+}
 
 void add_connections()
 {
-    int u, v, capacity;
+    int u, v, capacity_number;
     printf("Enter following lines\n");
 
     for (int i = 0; i < number_connections; i++)
     {
-        scanf("%d %d %d", &u, &v, &capacity);
-        add_capacity(u, v, capacity);
+        scanf("%d %d %d", &u, &v, &capacity_number);
+
+        if(u == TARGET && is_distributor_in(v))
+            add_capacity(u, get_distributor_out(v), capacity_number);
+        
+        else if(v == TARGET && is_distributor_in(u))
+            add_capacity(get_distributor_out(u), v, capacity_number);
+
+        else { add_capacity(u, v, capacity_number); }
     }
 }
 
@@ -117,7 +153,7 @@ void add_providers()
     char input_line[MAXBUFFER];
     char *token;
     int provider_capacity;
-    int provider = 0;
+    int provider = 2;
 
     printf("Enter second line\n");
     fgets(input_line, MAXBUFFER, stdin);
