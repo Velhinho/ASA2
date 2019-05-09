@@ -81,12 +81,16 @@ int get_distributor_out(int vertex)
 
 void print_graph()
 {
+    int v, cap;
     printf("\n");
-    for (int i = 0; i < number_vertices; i++)
+    for (int u = 0; u < number_vertices; u++)
     {
-        printf("vertex: %d\n", i);
-        printList(adj_list[i]);
-        printf("\n");
+        for (int i = 0; i < capacity[u]->size; i++)
+        {
+            v = getList(adj_list[u], i);
+            cap = getList(capacity[u], i);
+            printf("u:%d v:%d cap:%d\n", u, v, cap);
+        }
     }
 }
 
@@ -101,7 +105,7 @@ void add_connections()
 
         if(u == TARGET && is_distributor_in(v))
             add_capacity(u, get_distributor_out(v), capacity_number);
-        
+
         else if(v == TARGET && is_distributor_in(u))
             add_capacity(get_distributor_out(u), v, capacity_number);
 
