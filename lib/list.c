@@ -46,6 +46,21 @@ node_t *findList(list_t *list, int index)
     return node;
 }
 
+int findIndex(list_t *list, int data)
+{
+    node_t *node = list->start;
+
+    for (int i = 0; i < list->size; i++)
+    {
+        if(node->data == data)
+            return i;
+
+        node = node->next;
+    }
+
+    return -1;
+}
+
 int getList(list_t *list, int index)
 {
     node_t* node = findList(list, index);
@@ -54,6 +69,12 @@ int getList(list_t *list, int index)
         return -1;
 
     return node->data;
+}
+
+void changeList(list_t *list, int index, int new_data)
+{
+    node_t *node = findList(list, index);
+    node->data = new_data;
 }
 
 int removeList(list_t *list, int index)

@@ -12,6 +12,7 @@ typedef struct
 
 typedef struct
 {
+    int vertex_number;
     int currentflow;
     int capacity;
 }edge_t;

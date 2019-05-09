@@ -6,12 +6,17 @@
 #include <string.h>
 
 #define MAXBUFFER 10000
-
+#define SOURCE 0
+#define TARGET 1
 
 int number_vertices;
+int number_providers;
+int number_distributors;
+int number_connections;
 list_t *current_vertex, *height, *excess;
 list_t **adj_list, **capacity, **flow;
 queue_t *vertices_queue;
+
 
 void init_matrix(list_t **list)
 {
@@ -23,37 +28,64 @@ void init_matrix(list_t **list)
     }
 }
 
-int getEdge(list_t **list, int u, int v)
+void add_capacity(int u, int v, int capacity_number)
 {
-    return getList(list[u], v);(
+    addList(adj_list[u], v);
+    addList(adj_list[v], u);
+    
+    addList(capacity[u], capacity_number);
+    addList(capacity[v], capacity_number);
+
+    addList(flow[u], 0);
+    addList(flow[v], 0);
 }
 
-void addEdge(list_t **list, int u, int v)
+int get_capacity(int u, int v)
 {
-    addList(list[u], v);
-    addList(list[v], u);
+    int index = findIndex(adj_list[u], v);
+    return getList(capacity[u], index);
 }
 
-/*
-2 5 60
+int get_flow(int u, int v)
+{
+    int index = findIndex(adj_list[u], v);
+    return getList(flow[u], index);
+}
 
-capacity[2][5] = 60
+void change_flow(int u, int v, int flow_number)
+{
+    int index = findIndex(adj_list[u], v);
+    changeList(flow[u], index, flow_number);
+}
 
+void add_providers()
+{
+    char input_line[MAXBUFFER];
+    char *token;
+    int provider_capacity;
+    int provider = 0;
 
+    printf("Enter second line\n");
+    fgets(input_line, MAXBUFFER, stdin);
+    token = strtok(input_line, " ");
 
-*/
+    /* 
+    Creates a vertex to be connected to the source
+    and creates an edge from the source to the vertex
+    Each vertex and edge represent the max production
+    of a provider
+    */
+    while (token != NULL)
+    {
+        provider_capacity = atoi(token);
+        add_capacity(SOURCE, provider, provider_capacity);
+        printf("%d\n", provider_capacity);
 
-/* 
-3 fornecedores
-4 estacoes
-
-v[2] a [5] fornecedores
-
-v_in(v[6]): 6 + 4 + 1
-
-v[6] ao v[10]
-v[11] ao v[17]
-*/
+        // Next value
+        token = strtok(NULL, " ");
+        provider += 1;
+    }
+}
 
 void fill_pointers()
 {
@@ -64,15 +96,10 @@ void fill_pointers()
     init_matrix(capacity);
     init_matrix(flow);
     vertices_queue = initQueue();
-
-
 }
 
 void make_graph()
 {
-    int number_providers;
-    int number_distributors;
-    int number_connections;
     printf("Enter first line\n");
     scanf("%d %d %d",
             &number_providers,
@@ -81,6 +108,7 @@ void make_graph()
 
     number_vertices = number_providers + 2 * number_distributors;
     fill_pointers();
+    add_providers();
 }
 
 void relabel_front()
