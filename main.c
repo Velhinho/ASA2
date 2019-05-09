@@ -60,15 +60,6 @@ void change_flow(int u, int v, int flow_number)
     changeList(flow[u], index, flow_number);
 }
 
-void make_distributors()
-{
-    for (int i = ; i < number_distributors; i++)
-    {
-        /* code */
-    }
-    
-}
-
 void add_distributors()
 {
     char input_line[MAXBUFFER];
@@ -99,7 +90,7 @@ void add_distributors()
     while (token != NULL)
     {
         distributor_capacity = atoi(token);
-        add_capacity(distributor_in, distributor_out, distributor_capacity);    
+        add_capacity(distributor_in, distributor_out, distributor_capacity);
 
         // Next value
         token = strtok(NULL, " ");
@@ -159,7 +150,8 @@ void make_graph()
     // scanf leaves a newline char, screws next fgets
     fgets(clean_input, MAXBUFFER, stdin);
 
-    number_vertices = number_providers + 2 * number_distributors;
+    // Source + Target + Providers + 2 * Distributors
+    number_vertices = 2 + number_providers + 2 * number_distributors;
     fill_pointers();
     add_providers();
     add_distributors();
