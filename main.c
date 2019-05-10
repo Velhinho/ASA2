@@ -243,7 +243,19 @@ void make_graph()
 
 void push(int u, int v)
 {
+    int current_flow = get_flow(u, v); 
+    int current_capacity = get_capacity(u, v);
+    int capcity_flow_gap = current_capacity - current_flow; 
+    int added_flow = min(excess[u], capcity_flow_gap);
 
+    change_flow(u, v, current_flow + added_flow);
+
+    //Flow in residual graph
+    current_flow = get_flow(v, u);
+    change_flow(v, u, current_flow - added_flow);
+
+    excess[u] -= added_flow;
+    excess[v] += added_flow;
 }
 
 void relabel(int u)
