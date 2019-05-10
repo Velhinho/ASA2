@@ -14,7 +14,7 @@ int number_vertices;
 int number_providers;
 int number_distributors;
 int number_connections;
-int *current_vertex, *height, *excess;
+int *height, *excess;
 list_t **adj_list, **capacity, **flow;
 queue_t *vertices_queue;
 
@@ -213,7 +213,6 @@ void add_providers()
 
 void fill_pointers()
 {
-    current_vertex = init_int_array();
     height = init_int_array();
     excess = init_int_array();
     adj_list = init_matrix();
@@ -242,15 +241,55 @@ void make_graph()
     add_connections();
 }
 
-void discharge()
+void push(int u, int v)
 {
 
 }
 
+void relabel(int u)
+{
+
+}
+
+int can_push(int u, int v)
+{
+    int capacity_number = get_capacity(u, v);
+    int flow_number = get_flow(u, v);
+    int enough_capacity = capacity_number - flow_number > 0;
+    int enough_height = height[u] == (height[v] + 1);
+
+    return enough_capacity && enough_height;
+}
+
+void discharge(int u)
+{
+    int v;
+    int index = 0;
+    while(excess[u] > 0)
+    {
+        v = getList(adj_list[u], index);
+        
+        if(v == -1)
+        {
+            relabel(u);
+            index = 0;
+        }
+
+        else if(can_push(u, v))
+        {
+            push(u, v);
+        }
+
+        else
+        {
+            index += 1;
+        }
+    }
+}
+
 void fill_queue()
 {
-    // Start in 1 to skip source
-    for(int vertex = 1; vertex < number_vertices; vertex++)
+    for(int vertex = 0; vertex < number_vertices; vertex++)
     {
         pushQueue(vertices_queue, vertex);
     }
@@ -262,7 +301,6 @@ void preflow()
 
     for(int i = 0; i < number_vertices; i++)
     {
-        current_vertex[i] = 0;
         excess[i] = 0;
         height[i] = 0;
     }
@@ -273,6 +311,8 @@ void preflow()
     {
         v = getList(adj_list[SOURCE], i);
         capacity_number = getList(adj_list[SOURCE], i);
+        
+        excess[v] = capacity_number;
         change_flow(SOURCE, v, capacity_number);
         change_flow(v, SOURCE, 0);
     }

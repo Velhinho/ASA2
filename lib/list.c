@@ -80,7 +80,7 @@ void changeList(list_t *list, int index, int new_data)
 
 int removeList(list_t *list, int index)
 {
-    node_t* previousnode = findList(list, index - 1);
+    node_t *previousnode = findList(list, index - 1);
     node_t *currentnode = findList(list, index);
 
     if (currentnode == NULL)
