@@ -8,15 +8,34 @@
 #define MAXBUFFER 10000
 #define SOURCE 0
 #define TARGET 1
+#define EMPTY 0
 
 int number_vertices;
 int number_providers;
 int number_distributors;
 int number_connections;
-list_t *current_vertex, *height, *excess;
+int *current_vertex, *height, *excess;
 list_t **adj_list, **capacity, **flow;
 queue_t *vertices_queue;
 
+int min(int a, int b)
+{
+    if(a < b)
+    {
+        return a;
+    }
+    
+    else 
+    { 
+        return b;
+    } 
+}
+
+int *init_int_array()
+{
+    int *array = (int *)malloc(number_vertices * sizeof(int));
+    return array;
+}
 
 list_t **init_matrix()
 {
@@ -39,7 +58,7 @@ void add_capacity(int u, int v, int capacity_number)
     addList(capacity[v], capacity_number);
 
     addList(flow[u], 0);
-    addList(flow[v], 0);
+    addList(flow[v], capacity_number);
 }
 
 int get_capacity(int u, int v)
@@ -57,6 +76,10 @@ int get_flow(int u, int v)
 void change_flow(int u, int v, int flow_number)
 {
     int index = findIndex(adj_list[u], v);
+    if(index == -1)
+    {
+        fprintf(stderr, "No Such Index u:%d v:%d", u, v);
+    }
     changeList(flow[u], index, flow_number);
 }
 
@@ -104,12 +127,19 @@ void add_connections()
         scanf("%d %d %d", &u, &v, &capacity_number);
 
         if(u == TARGET && is_distributor_in(v))
+        {
             add_capacity(u, get_distributor_out(v), capacity_number);
+        }
 
         else if(v == TARGET && is_distributor_in(u))
+        {
             add_capacity(get_distributor_out(u), v, capacity_number);
+        }
 
-        else { add_capacity(u, v, capacity_number); }
+        else
+        {
+            add_capacity(u, v, capacity_number);
+        } 
     }
     print_graph();
 }
@@ -183,9 +213,9 @@ void add_providers()
 
 void fill_pointers()
 {
-    current_vertex = initList();
-    height = initList();
-    excess = initList();
+    current_vertex = init_int_array();
+    height = init_int_array();
+    excess = init_int_array();
     adj_list = init_matrix();
     capacity = init_matrix();
     flow = init_matrix();
@@ -212,9 +242,61 @@ void make_graph()
     add_connections();
 }
 
-void relabel_front()
+void discharge()
 {
 
+}
+
+void fill_queue()
+{
+    // Start in 1 to skip source
+    for(int vertex = 1; vertex < number_vertices; vertex++)
+    {
+        pushQueue(vertices_queue, vertex);
+    }
+}
+
+void preflow()
+{
+    int v, capacity_number;
+
+    for(int i = 0; i < number_vertices; i++)
+    {
+        current_vertex[i] = 0;
+        excess[i] = 0;
+        height[i] = 0;
+    }
+    height[SOURCE] = number_vertices;
+    
+    // Saturate vertices leaving source
+    for(int i = 0; i < adj_list[SOURCE]->size; i++)
+    {
+        v = getList(adj_list[SOURCE], i);
+        capacity_number = getList(adj_list[SOURCE], i);
+        change_flow(SOURCE, v, capacity_number);
+        change_flow(v, SOURCE, 0);
+    }
+}
+
+void relabel_front()
+{
+    int vertex, old_height;
+    preflow();
+    fill_queue();
+
+    vertex = popQueue(vertices_queue);
+    while(vertex != EMPTY)
+    {
+        old_height = height[vertex];
+        discharge(vertex);
+
+        if(height[vertex] > old_height)
+        {
+            // relabel TO FRONT of the list
+            pushQueue(vertices_queue, vertex);
+        }
+        vertex = popQueue(vertices_queue);
+    }
 }
 
 int main()
