@@ -103,26 +103,10 @@ int get_distributor_out(int vertex)
     return vertex + number_distributors;
 }
 
-void print_graph()
-{
-    int v, cap, fl;
-    printf("\n");
-    for (int u = 0; u < number_vertices; u++)
-    {
-        for (int i = 0; i < capacity[u]->size; i++)
-        {
-            v = getList(adj_list[u], i);
-            cap = getList(capacity[u], i);
-            fl = getList(flow[u], i);
-            printf("u:%d v:%d flow:%d cap:%d\n", u, v, fl, cap);
-        }
-    }
-}
-
 void add_connections()
 {
     int u, v, capacity_number;
-    printf("Enter following lines\n");
+    //printf("Enter following lines\n");
 
     for (int i = 0; i < number_connections; i++)
     {
@@ -168,7 +152,7 @@ void add_distributors()
     int distributor_in = number_providers + 2;
     int distributor_out = distributor_in + number_distributors;
 
-    printf("Enter third line\n");
+    //printf("Enter third line\n");
     fgets(input_line, MAXBUFFER, stdin);
     token = strtok(input_line, " ");
 
@@ -191,7 +175,7 @@ void add_providers()
     int provider_capacity;
     int provider = 2;
 
-    printf("Enter second line\n");
+    //printf("Enter second line\n");
     fgets(input_line, MAXBUFFER, stdin);
     token = strtok(input_line, " ");
 
@@ -225,7 +209,7 @@ void fill_pointers()
 void make_graph()
 {
     char clean_input[MAXBUFFER];
-    printf("Enter first line\n");
+    //printf("Enter first line\n");
     scanf("%d %d %d",
             &number_providers,
             &number_distributors,
@@ -379,16 +363,57 @@ void relabel_front()
     }
 }
 
-void find_cut()
+int distributor_different_cut(int u)
 {
-    print_graph();
+    /*
+    If the distributor_in and distributor_out
+    are in different part of the min cut
+    then the distributor must be increased
+    */
+
+   if(is_distributor_in(u))
+   {
+       int dist_out = get_distributor_out(u);
+
+       return (height[u] > height[SOURCE] || height[dist_out] > height[SOURCE]);
+   }
+
+   return 0;
 }
 
+void find_cut()
+{
+    for(int vertex = 0; vertex < number_vertices; vertex++)
+    {
+        if(distributor_different_cut(vertex))
+        {
+            printf("%d ", vertex);
+        }
+    }
+    printf("\n");
+}
+/*
+void print_graph()
+{
+    int v, cap, fl;
+    printf("\n");
+    for (int u = 0; u < number_vertices; u++)
+    {
+        for (int i = 0; i < capacity[u]->size; i++)
+        {
+            v = getList(adj_list[u], i);
+            cap = getList(capacity[u], i);
+            fl = getList(flow[u], i);
+            printf("u:%d v:%d flow:%d cap:%d\n", u, v, fl, cap);
+        }
+    }
+}
+*/
 int main()
 {
     maxflow = 0;
     make_graph();
     relabel_front();
+    printf("%d\n", maxflow);
     find_cut();
-    printf("\nmax flow: %d\n", maxflow);
 }
