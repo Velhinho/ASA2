@@ -260,7 +260,17 @@ void push(int u, int v)
 
 void relabel(int u)
 {
+    int v;
+    int new_height = height[u];
+    
+    for(int i = 0; i < adj_list[u]->size; i++)
+    {
+        v = getList(adj_list[u], i);
 
+        new_height = min(new_height, height[v]);
+    }
+
+    height[u] = new_height + 1;
 }
 
 int can_push(int u, int v)
