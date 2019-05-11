@@ -8,7 +8,7 @@
 #define MAXBUFFER 10000
 #define SOURCE 0
 #define TARGET 1
-#define EMPTY 0
+#define EMPTY -1
 
 int number_vertices;
 int number_providers;
@@ -17,6 +17,7 @@ int number_connections;
 int *height, *excess;
 list_t **adj_list, **capacity, **flow;
 queue_t *vertices_queue;
+int maxflow;
 
 int min(int a, int b)
 {
@@ -104,7 +105,7 @@ int get_distributor_out(int vertex)
 
 void print_graph()
 {
-    int v, cap;
+    int v, cap, fl;
     printf("\n");
     for (int u = 0; u < number_vertices; u++)
     {
@@ -112,7 +113,8 @@ void print_graph()
         {
             v = getList(adj_list[u], i);
             cap = getList(capacity[u], i);
-            printf("u:%d v:%d cap:%d\n", u, v, cap);
+            fl = getList(flow[u], i);
+            printf("u:%d v:%d flow:%d cap:%d\n", u, v, fl, cap);
         }
     }
 }
@@ -141,7 +143,6 @@ void add_connections()
             add_capacity(u, v, capacity_number);
         } 
     }
-    print_graph();
 }
 
 void add_distributors()
@@ -256,18 +257,35 @@ void push(int u, int v)
 
     excess[u] -= added_flow;
     excess[v] += added_flow;
+    
+    //Source and Target cannot be overflowing
+    if(v == SOURCE)
+    {
+        excess[SOURCE] = 0;
+    }
+
+    else if(v == TARGET)
+    {
+        maxflow += excess[TARGET];
+        excess[TARGET] = 0;
+    }
 }
 
 void relabel(int u)
 {
-    int v;
+    int v, capacity_number, flow_number;
     int new_height = height[u];
     
     for(int i = 0; i < adj_list[u]->size; i++)
     {
         v = getList(adj_list[u], i);
+        capacity_number = get_capacity(u, v);
+        flow_number = get_capacity(u, v);
 
+        if(capacity_number - flow_number > 0)
+        {
         new_height = min(new_height, height[v]);
+        }
     }
 
     height[u] = new_height + 1;
@@ -277,8 +295,8 @@ int can_push(int u, int v)
 {
     int capacity_number = get_capacity(u, v);
     int flow_number = get_flow(u, v);
-    int enough_capacity = capacity_number - flow_number > 0;
-    int enough_height = height[u] == (height[v] + 1);
+    int enough_capacity = (capacity_number - flow_number > 0);
+    int enough_height = (height[u] == (height[v] + 1));
 
     return enough_capacity && enough_height;
 }
@@ -332,7 +350,7 @@ void preflow()
     for(int i = 0; i < adj_list[SOURCE]->size; i++)
     {
         v = getList(adj_list[SOURCE], i);
-        capacity_number = getList(adj_list[SOURCE], i);
+        capacity_number = getList(capacity[SOURCE], i);
         
         excess[v] = capacity_number;
         change_flow(SOURCE, v, capacity_number);
@@ -361,8 +379,16 @@ void relabel_front()
     }
 }
 
+void find_cut()
+{
+    print_graph();
+}
+
 int main()
 {
+    maxflow = 0;
     make_graph();
     relabel_front();
+    find_cut();
+    printf("\nmax flow: %d\n", maxflow);
 }
